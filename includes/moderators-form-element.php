@@ -17,7 +17,7 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 		case 'moderators':
 			$roles = get_editable_roles();
 
-			$roles_array = array( 'all' => __( 'All Roles', 'buddyforms-moderation' ) );
+			$roles_array = array( 'all' => __( 'All Roles', 'buddyforms-review' ) );
 			foreach ( $roles as $role_kay => $role ) {
 				$roles_array[ $role_kay ] = $role['name'];
 			}
@@ -27,37 +27,37 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 				$moderators = $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['moderators'];
 			}
 			$form_fields['general']['moderators'] = new Element_Select(
-				'<b>' . __( 'Moderators', 'buddyforms-moderation' ) . '</b>',
+				'<b>' . __( 'Moderators', 'buddyforms-review' ) . '</b>',
 				'buddyforms_options[form_fields][' . $field_id . '][moderators]',
 				$roles_array,
 				array(
 					'value'         => $moderators,
 					'data-field_id' => $field_id,
-					'shortDesc'     => __( 'Let you users select the moderator(s) form the selected role or from all users.', 'buddyforms-moderation' ),
+					'shortDesc'     => __( 'Let you users select the moderator(s) form the selected role or from all users.', 'buddyforms-review' ),
 				)
 			);
 
 			$hide_for_moderators                           = isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['hide_for_moderators'] ) ? $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['hide_for_moderators'] : 'false';
 			$form_fields['general']['hide_for_moderators'] = new Element_Checkbox(
-				'<b>' . __( 'Hide for Moderator', 'buddyforms-moderation' ) . '</b>',
+				'<b>' . __( 'Hide for Moderator', 'buddyforms-review' ) . '</b>',
 				'buddyforms_options[form_fields][' . $field_id . '][hide_for_moderators]',
 				array(
-					'hide_for_moderators' => '<b>' . __( 'Hide', 'buddyforms-moderation' ) . '</b>',
+					'hide_for_moderators' => '<b>' . __( 'Hide', 'buddyforms-review' ) . '</b>',
 				),
 				array(
 					'value'     => $hide_for_moderators,
-					'shortDesc' => __( 'Hide this field for the moderators users.', 'buddyforms-moderation' ),
+					'shortDesc' => __( 'Hide this field for the moderators users.', 'buddyforms-review' ),
 				)
 			);
 
-			$placeholder                                = isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) ? stripcslashes( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) : __( 'Select a Moderators', 'buddyforms-moderation' );
+			$placeholder                                = isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) ? stripcslashes( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) : __( 'Select a Moderators', 'buddyforms-review' );
 			$form_fields['general']['data-placeholder'] = new Element_Textbox(
-				'<b>' . __( 'Placeholder', 'buddyforms-moderation' ) . '</b>',
+				'<b>' . __( 'Placeholder', 'buddyforms-review' ) . '</b>',
 				'buddyforms_options[form_fields][' . $field_id . '][data-placeholder]',
 				array(
 					'data'      => $field_id,
 					'value'     => $placeholder,
-					'shortDesc' => __( 'This string will be show inside the field.', 'buddyforms-moderation' ),
+					'shortDesc' => __( 'This string will be show inside the field.', 'buddyforms-review' ),
 				)
 			);
 
@@ -238,7 +238,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 
 			if ( ! isset( $_POST['buddyforms_moderators'] ) ) {
 				$valid                    = false;
-				$validation_error_message = __( 'Please select a Moderator!', 'buddyforms-moderation' );
+				$validation_error_message = __( 'Please select a Moderator!', 'buddyforms-review' );
 				$global_error->add_error( new BuddyForms_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $moderation_field['slug'], $form_slug ) );
 			}
 		}
@@ -296,7 +296,7 @@ function buddyforms_moderators_ajax_approve_post() {
 		}
 
 		if ( ! isset( $_POST['post_id'] ) ) {
-			echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
+			echo esc_html__( 'There has been an error sending the message!', 'buddyforms-review' );
 			die();
 		}
 
@@ -307,7 +307,7 @@ function buddyforms_moderators_ajax_approve_post() {
 
 		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
 		if ( ! $form_slug ) {
-			esc_html_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-moderation' );
+			esc_html_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-review' );
 			die();
 		}
 
@@ -336,9 +336,9 @@ function buddyforms_moderators_ajax_approve_post() {
 				$from_name = $from_email;
 			}
 			$moderation_options = buddyforms_get_form_option( $form_slug, 'moderation' );
-			$subject            = ! empty( $moderation_options['approve_subject'] ) ? $moderation_options['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
+			$subject            = ! empty( $moderation_options['approve_subject'] ) ? $moderation_options['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-review' );
 			$subject            = buddyforms_moderation_process_shortcode( $subject, $post_id, $form_slug );
-			$email_body         = ! empty( $moderation_options['approve_message'] ) ? $moderation_options['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
+			$email_body         = ! empty( $moderation_options['approve_message'] ) ? $moderation_options['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-review' );
 			$email_body         = buddyforms_moderation_process_shortcode( $email_body, $post_id, $form_slug );
 			$email_body         = nl2br( $email_body );
 			$result             = buddyforms_email( $mail_to, $subject, $from_name, $from_email, $email_body, array(), array(), $form_slug, $post_id );

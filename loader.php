@@ -8,7 +8,7 @@
  * Author URI: https://themekraft.com/buddyforms/
  * License: GPLv2 or later
  * Network: false
- * Text Domain: buddyforms-moderation
+ * Text Domain: buddyforms-review
  * Domain Path: /languages
  * Svn: buddyforms-review
  *
@@ -69,7 +69,7 @@ function bf_moderation_includes() {
  * Load the textdomain for the plugin
  */
 function buddyforms_moderation_load_plugin_textdomain() {
-	load_plugin_textdomain( 'buddyforms-moderation', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'buddyforms-review', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 function buddyforms_moderation_error_log( $message ) {
