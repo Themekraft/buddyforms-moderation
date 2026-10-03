@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	buddyforms_add_bf_thickbox();
 	ob_start();
@@ -31,7 +35,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 					data: {
 						"action": "buddyforms_reject_post_as_moderator",
 						"post_id": post_id,
-						"nonce": '<?php echo wp_create_nonce( __DIR__ . 'buddyforms_moderation' ); ?>',
+						"nonce": '<?php echo esc_js( wp_create_nonce( __DIR__ . 'buddyforms_moderation' ) ); ?>',
 						"form_slug": form_slug,
 						"post_reject_email_subject": post_reject_email_subject,
 						"post_reject_email_message": post_reject_email_message

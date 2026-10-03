@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function buddyforms_moderators_register_posts_taxonomy() {
 	global $buddyforms;
 

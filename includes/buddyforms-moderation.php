@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * Update the original parent post
  *
@@ -190,7 +194,7 @@ class BF_Moderation_Update_Post {
 
 		$args = array(
 			'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms-review' ),
-			'label_count'               => _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
@@ -201,7 +205,7 @@ class BF_Moderation_Update_Post {
 
 		$args = array(
 			'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms-review' ),
-			'label_count'               => _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
@@ -212,7 +216,7 @@ class BF_Moderation_Update_Post {
 
 		$args = array(
 			'label'                     => _x( 'Approved', 'Approved', 'buddyforms-review' ),
-			'label_count'               => _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,

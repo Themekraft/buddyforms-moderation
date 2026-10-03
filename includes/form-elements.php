@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_moderation', __( 'Moderation', 'buddyforms-review' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );

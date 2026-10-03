@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 // We need to delete all children if the parent has been deleted.
 add_action( 'transition_post_status', 'bf_moderation_delete_children', 99, 3 );
 function bf_moderation_delete_children( $new_status, $old_status, $post ) {

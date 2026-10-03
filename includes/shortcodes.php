@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Create a shortcode to display the logged in collaborative user posts
  *
@@ -44,7 +48,11 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 			}
 		}
 
-		$errormessage = __( sprintf( 'No %s to moderate at the moment.', $post_type_to_mderate_plural_label ), 'buddyforms-review' );
+		$errormessage = sprintf(
+			/* translators: %s: plural name of the post type to moderate. */
+			__( 'No %s to moderate at the moment.', 'buddyforms-review' ),
+			$post_type_to_mderate_plural_label
+		);
 
 		$forced_moderation_args = array(
 			'fields'      => 'ids',
