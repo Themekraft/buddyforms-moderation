@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Version: 1.5.1
  * Requires at least: 5.9
  * Requires PHP: 7.4
+ * Requires Plugins: buddyforms
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/buddyforms/
  * License: GPLv2 or later
@@ -38,6 +39,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  ****************************************************************************
  */
 
+if ( ! function_exists( 'buddyforms_addon_plugin_dependencies_slug' ) ) {
+	/**
+	 * Let the running BuddyForms copy (free or premium) satisfy "Requires Plugins: buddyforms".
+	 *
+	 * @param string $slug Dependency slug.
+	 *
+	 * @return string
+	 */
+	function buddyforms_addon_plugin_dependencies_slug( $slug ) {
+		if ( 'buddyforms' === $slug && defined( 'BUDDYFORMS_INSTALL_PATH' ) ) {
+			return basename( BUDDYFORMS_INSTALL_PATH );
+		}
+
+		return $slug;
+	}
+
+	add_filter( 'wp_plugin_dependencies_slug', 'buddyforms_addon_plugin_dependencies_slug' );
+}
+
 add_action( 'init', 'bf_moderation_includes', 10 );
 function bf_moderation_includes() {
 	global $buddyforms_new;
@@ -60,12 +80,6 @@ function bf_moderation_includes() {
 	if ( ! is_admin() ) {
 		return;
 	}
-
-	// Require TGM
-	require dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php';
-
-	// Hook required plugins function to the tgmpa_register action
-	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
 
 	add_action( 'plugins_loaded', 'buddyforms_moderation_load_plugin_textdomain' );
 }
@@ -130,35 +144,6 @@ function buddyform_moderation_activate() {
 }
 
 register_activation_hook( __FILE__, 'buddyform_moderation_activate' );
-
-function buddyform_moderation_dependency() {
-	// Create the required plugins array
-	if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
-		$plugins['buddyforms'] = array(
-			'name'     => 'BuddyForms',
-			'slug'     => 'buddyforms',
-			'required' => true,
-		);
-
-		$config = array(
-			'id'           => 'buddyforms-tgmpa',
-			// Unique ID for hashing notices for multiple instances of TGMPA.
-			'parent_slug'  => 'plugins.php',
-			// Parent menu slug.
-			'capability'   => 'manage_options',
-			// Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-			'has_notices'  => true,
-			// Show admin notices or not.
-			'dismissable'  => false,
-			// If false, a user cannot dismiss the nag message.
-			'is_automatic' => true,
-			// Automatically activate plugins after installation or not.
-		);
-
-		// Call the tgmpa function to register the required plugins
-		tgmpa( $plugins, $config );
-	}
-}
 
 if ( ! function_exists( 'bfmod_fs' ) ) {
 	// Create a helper function for easy SDK access.
