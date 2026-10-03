@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 // We need to delete all children if the parent has been deleted.
 add_action( 'transition_post_status', 'bf_moderation_delete_children', 99, 3 );
 function bf_moderation_delete_children( $new_status, $old_status, $post ) {
@@ -119,7 +123,7 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		$post_parent = new WP_Query( $args );
 
 		if ( $post_parent->have_posts() ) {
-			$edit_post_link = '<span style="margin-right: 10px; cursor: not-allowed;" aria-label="' . __( 'New Version in Process', 'buddyforms-moderation' ) . '" title="' . __( 'New Version in Process', 'buddyforms-moderation' ) . '" class="dashicons dashicons-lock disabled"></span>';
+			$edit_post_link = '<span style="margin-right: 10px; cursor: not-allowed;" aria-label="' . __( 'New Version in Process', 'buddyforms-review' ) . '" title="' . __( 'New Version in Process', 'buddyforms-review' ) . '" class="dashicons dashicons-lock disabled"></span>';
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
@@ -167,15 +171,15 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 
 		<tr class="tr-sub <?php echo esc_attr( $post_status_css ); ?>">
 			<td>
-				<span class="mobile-th"><?php esc_html_e( 'Status', 'buddyforms-moderation' ); ?></span>
+				<span class="mobile-th"><?php esc_html_e( 'Status', 'buddyforms-review' ); ?></span>
 				<div class="status-item">
 					<div class="table-item-status"><?php echo esc_html( $post_status_name ); ?></div>
-					<div class="item-status-action"><?php esc_html_e( 'Created', 'buddyforms-moderation' ); ?><?php the_time( 'F j, Y' ); ?></div>
+					<div class="item-status-action"><?php esc_html_e( 'Created', 'buddyforms-review' ); ?><?php the_time( 'F j, Y' ); ?></div>
 				</div>
 			</td>
 			<td>
 				<div class="meta">
-					<span class="mobile-th"><?php esc_html_e( 'Actions', 'buddyforms-moderation' ); ?></span>
+					<span class="mobile-th"><?php esc_html_e( 'Actions', 'buddyforms-review' ); ?></span>
 					<?php buddyforms_post_entry_actions( $form_slug ); ?>
 				</div>
 			</td>
@@ -284,7 +288,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 					<div class="item">
 						<div class="item-title">
-							<a href="<?php echo esc_url( $the_permalink ); ?>" rel="bookmark" title="<?php esc_html_e( 'Permanent Link to', 'buddyforms-moderation' ); ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
+							<a href="<?php echo esc_url( $the_permalink ); ?>" rel="bookmark" title="<?php esc_html_e( 'Permanent Link to', 'buddyforms-review' ); ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
 						</div>
 
 						<div class="item-desc"><?php echo esc_html( get_the_excerpt() ); ?></div>
@@ -297,11 +301,14 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						<div class="meta">
 							<div class="item-status"><?php echo esc_html( $post_status_name ); ?></div>
 							<?php buddyforms_post_entry_actions( $form_slug ); ?>
-							<div class="publish-date"><?php esc_html_e( 'Created', 'buddyforms-moderation' ); ?>&nbsp;<?php the_time( $wp_date_format . ' ' . $wp_time_format ); ?></div>
+							<div class="publish-date"><?php esc_html_e( 'Created', 'buddyforms-review' ); ?>&nbsp;<?php the_time( $wp_date_format . ' ' . $wp_time_format ); ?></div>
 						</div>
 					</div>
 
-					<?php echo apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() ); ?>
+					<?php
+					$meta_html = apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() );
+					echo function_exists( 'buddyforms_wp_kses_allowed_atts' ) ? wp_kses( $meta_html, buddyforms_wp_kses_allowed_atts() ) : wp_kses_post( $meta_html );
+					?>
 
 					<div class="clear"></div>
 
@@ -515,7 +522,7 @@ add_action( 'wp_ajax_buddyforms_reject_now', 'buddyforms_reject_now' );
 function buddyforms_reject_now() {
 
 	if ( ! isset( $_POST['post_id'] ) ) {
-		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-review' );
 		die();
 	}
 
@@ -575,11 +582,11 @@ function buddyforms_reject_now() {
 	);
 
 	if ( ! $result ) {
-		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-review' );
 	}
 
 	if ( is_wp_error( $result_update ) ) {
-		echo esc_html__( 'There has been an error changing the post status!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error changing the post status!', 'buddyforms-review' );
 	}
 
 	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
@@ -647,7 +654,7 @@ function buddyforms_moderators_avoid_edit_error_message_moderation_post( $messag
 		return $message;
 	}
 
-	return __( 'You are not allowed to edit this post after it is send to moderation. What are you doing here?', 'buddyforms-moderation' );
+	return __( 'You are not allowed to edit this post after it is send to moderation. What are you doing here?', 'buddyforms-review' );
 }
 
 add_filter( 'buddyforms_process_submission_ok_error_message', 'buddyforms_moderators_avoid_edit_error_message_moderation_post', 99, 3 );
@@ -903,7 +910,7 @@ add_filter( 'comments_open', 'buddyforms_moderation_disable_comment', 10, 2 );
 function buddyforms_moderators_actions_html( $form_slug, $post_id ) {
 	echo '<ul class="edit_links">';
 	echo '<li>';
-	echo '<a title="' . esc_html__( 'Approve', 'buddyforms-moderation' ) . '"  id="' . esc_attr( $post_id ) . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . esc_html__( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
+	echo '<a title="' . esc_html__( 'Approve', 'buddyforms-review' ) . '"  id="' . esc_attr( $post_id ) . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . esc_html__( 'Approve', 'buddyforms-review' ) . '</a></li>';
 	echo '</li>';
 	echo '<li>';
 	buddyforms_moderators_reject_post( $post_id, $form_slug );
@@ -950,8 +957,8 @@ function buddyforms_moderation_include_assets() {
 			'ajax'  => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
 			'il18n' => array(
-				'approve'          => __( 'Approve this Post', 'buddyforms-moderation' ),
-				'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
+				'approve'          => __( 'Approve this Post', 'buddyforms-review' ),
+				'select_moderator' => __( 'Please select a Moderator', 'buddyforms-review' ),
 			),
 		)
 	);
@@ -972,11 +979,11 @@ function buddyforms_moderators_select( $elements_select_options ) {
 	if ( $post->post_type != 'buddyforms' ) {
 		return $elements_select_options;
 	}
-	$elements_select_options['moderators']['label']                = __( 'Moderation', 'buddyforms-moderation' );
+	$elements_select_options['moderators']['label']                = __( 'Moderation', 'buddyforms-review' );
 	$elements_select_options['moderators']['class']                = 'bf_show_if_f_type_post';
 	$elements_select_options['moderators']['fields']['moderators'] = array(
 		'is_pro' => true,
-		'label'  => __( 'Select Moderators ', 'buddyforms-moderation' ),
+		'label'  => __( 'Select Moderators ', 'buddyforms-review' ),
 	);
 
 	return $elements_select_options;

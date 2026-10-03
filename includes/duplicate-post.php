@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * Function creates post duplicate as a draft and redirects then to the edit post screen
  */
@@ -135,7 +139,7 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
  */
 function buddyforms_moderation_duplicate_post_link( $actions, $post ) {
 	if ( current_user_can( 'edit_pages' ) && $post->post_status === 'publish' ) {
-		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms' ) . '</a>';
+		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '</a>';
 	}
 
 	return $actions;
@@ -164,7 +168,7 @@ function buddyforms_moderation_admin_bar_mod_button( $wp_admin_bar ) {
 
 	$args = array(
 		'id'    => 'buddyforms-admin-moderation',
-		'title' => __( 'Create new Edit Draft', 'buddyforms' ),
+		'title' => __( 'Create new Edit Draft', 'buddyforms-review' ),
 		'href'  => get_admin_url() . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ),
 		'meta'  => array(
 			'data-post_id' => $post->ID,

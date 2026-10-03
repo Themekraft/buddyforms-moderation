@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * Update the original parent post
  *
@@ -13,9 +17,9 @@ class BF_Moderation_Update_Post {
 	private $statuses;
 
 	public function __construct() {
-		$this->status_edit       = __( 'Edit Draft', 'buddyforms-moderation' );
-		$this->status_moderation = __( 'Awaiting moderation', 'buddyforms-moderation' );
-		$this->status_approved   = __( 'Approved', 'buddyforms-moderation' );
+		$this->status_edit       = __( 'Edit Draft', 'buddyforms-review' );
+		$this->status_moderation = __( 'Awaiting moderation', 'buddyforms-review' );
+		$this->status_approved   = __( 'Approved', 'buddyforms-review' );
 		$this->statuses          = array(
 			'edit-draft'      => $this->status_edit,
 			'awaiting-review' => $this->status_moderation,
@@ -189,8 +193,8 @@ class BF_Moderation_Update_Post {
 	function bf_moderation_post_status() {
 
 		$args = array(
-			'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
-			'label_count'               => _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms' ),
+			'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
@@ -200,8 +204,8 @@ class BF_Moderation_Update_Post {
 		register_post_status( 'edit-draft', $args );
 
 		$args = array(
-			'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms' ),
-			'label_count'               => _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms' ),
+			'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
@@ -211,8 +215,8 @@ class BF_Moderation_Update_Post {
 		register_post_status( 'awaiting-review', $args );
 
 		$args = array(
-			'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
-			'label_count'               => _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms' ),
+			'label'                     => _x( 'Approved', 'Approved', 'buddyforms-review' ),
+			'label_count'               => /* translators: %s: number of posts. */ _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms-review' ),
 			'public'                    => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,

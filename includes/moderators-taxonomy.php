@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function buddyforms_moderators_register_posts_taxonomy() {
 	global $buddyforms;
 
@@ -8,12 +12,12 @@ function buddyforms_moderators_register_posts_taxonomy() {
 	 */
 
 	$labels = array(
-		'name'          => __( 'Moderators Posts', 'buddyforms-moderation' ),
-		'singular_name' => __( 'Moderator Post', 'buddyforms-moderation' ),
+		'name'          => __( 'Moderators Posts', 'buddyforms-review' ),
+		'singular_name' => __( 'Moderator Post', 'buddyforms-review' ),
 	);
 
 	$args = array(
-		'label'                 => __( 'Moderators Posts', 'buddyforms-moderation' ),
+		'label'                 => __( 'Moderators Posts', 'buddyforms-review' ),
 		'labels'                => $labels,
 		'public'                => false,
 		'publicly_queryable'    => false,

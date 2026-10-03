@@ -1,0 +1,394 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BuddyForms Moderation ( Former: Review Logic )\n"
+"POT-Creation-Date: 2020-05-07 11:31-0300\n"
+"PO-Revision-Date: 2020-05-07 11:32-0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: loader.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: includes/buddyforms-moderation.php:16
+msgid "Edit Draft"
+msgstr "Editar borrador"
+
+#: includes/buddyforms-moderation.php:17
+msgid "Awaiting moderation"
+msgstr "A la espera de moderación"
+
+#: includes/buddyforms-moderation.php:18
+msgid "Approved"
+msgstr "Aprobado"
+
+#: includes/buddyforms-moderation.php:177
+msgctxt "Edit Draft"
+msgid "Edit Draft"
+msgstr "Editar borrador"
+
+#: includes/buddyforms-moderation.php:178
+#, php-format
+msgid "Edit Draft (%s)"
+msgid_plural "Edit Draft (%s)"
+msgstr[0] "Editar borrador (%s)"
+msgstr[1] "Editar borrador (%s)"
+
+#: includes/buddyforms-moderation.php:188
+msgctxt "Awaiting moderation"
+msgid "Awaiting moderation"
+msgstr "A la espera de moderación"
+
+#: includes/buddyforms-moderation.php:189
+#, php-format
+msgid "Awaiting moderation (%s)"
+msgid_plural "Awaiting moderation (%s)"
+msgstr[0] "Espera de moderación (%s)"
+msgstr[1] "Espera de moderación (%s)"
+
+#: includes/buddyforms-moderation.php:199
+msgctxt "Approved"
+msgid "Approved"
+msgstr "Aprobado"
+
+#: includes/buddyforms-moderation.php:200
+#, php-format
+msgid "Approved (%s)"
+msgid_plural "Approved (%s)"
+msgstr[0] "(%s) Aprobados"
+msgstr[1] "(%s) Aprobados"
+
+#: includes/duplicate-post.php:139 includes/duplicate-post.php:168
+msgid "Create new Edit Draft"
+msgstr "Crear un nuevo borrador de edición"
+
+#: includes/form-elements.php:5 includes/moderators-form-element.php:17
+msgid "Moderation"
+msgstr "Moderación"
+
+#: includes/form-elements.php:25
+msgid "Moderation Logic"
+msgstr "Lógica de moderación"
+
+#: includes/form-elements.php:41
+msgid "Submit"
+msgstr "Enviar"
+
+#: includes/form-elements.php:42
+msgid "Label for Submit Button"
+msgstr "Etiqueta para enviar botón"
+
+#: includes/form-elements.php:44
+msgid "Save"
+msgstr "Guardar"
+
+#: includes/form-elements.php:45
+msgid "Label for Save Button"
+msgstr "Etiqueta para guardar botón"
+
+#: includes/form-elements.php:47
+msgid "Submit for moderation"
+msgstr "Enviar para moderación"
+
+#: includes/form-elements.php:48
+msgid "Label for Submit for moderation Button"
+msgstr "Etiqueta para enviar para el botón de moderación"
+
+#: includes/form-elements.php:50
+msgid "Create new Draft"
+msgstr "Crear un nuevo borrador"
+
+#: includes/form-elements.php:51
+msgid "Label for Create new Draft Button"
+msgstr "Etiqueta para crear un nuevo botón de borrador"
+
+#: includes/form-elements.php:53
+msgid ""
+"This Post is waiting for approval and can not be changed until it gets "
+"approved"
+msgstr ""
+"Este Post está esperando la aprobación y no se puede cambiar hasta que se "
+"apruebe"
+
+#: includes/form-elements.php:54
+msgid "If the form is displayed but editing is disabled"
+msgstr "Si se muestra el formulario pero la edición está deshabilitada"
+
+#: includes/form-elements.php:57
+msgid "Force Frontend Editors"
+msgstr "Forzar editores de frontend"
+
+#: includes/form-elements.php:58
+msgid "Force Moderators"
+msgstr "Moderadores de fuerza"
+
+#: includes/form-elements.php:61
+msgid ""
+"With this option you can force the moderators to be one of the selected role "
+"in the option <i>Frontend Moderators Role</i> option. This option will "
+"disabled the moderation field in the form."
+msgstr ""
+"Con esta opción puede forzar a los moderadores a ser uno de los roles "
+"seleccionados en la opción Rol de <i>moderadores de front-end.</i> Esta "
+"opción desactivará el campo de moderación en el formulario."
+
+#: includes/form-elements.php:66 includes/moderators-form-element.php:47
+msgid "All Roles"
+msgstr "Todas las Funciones"
+
+#: includes/form-elements.php:75
+msgid "Frontend Moderators Role"
+msgstr "Rol de moderadores frontend"
+
+#: includes/form-elements.php:77
+msgid ""
+"Filter the moderators that will have access to post send to moderate in the "
+"frontend. You can select one role or all users."
+msgstr ""
+"Filtre los moderadores que tendrán acceso al envío posterior a moderado en "
+"el front-end. Puede seleccionar un rol o todos los usuarios."
+
+#: includes/form-elements.php:84 includes/moderators-reject.php:72
+msgid "Your submission got Rejected"
+msgstr "Su envío fue rechazado"
+
+#: includes/form-elements.php:85
+msgid "Reject Subject"
+msgstr "Rechazar asunto"
+
+#: includes/form-elements.php:88 includes/form-elements.php:99
+#: includes/form-elements.php:110 includes/form-elements.php:121
+msgid ""
+"Click on one of the available shortcode to insert on the above element at "
+"caret position:"
+msgstr ""
+"Haga clic en uno de los shortcode disponibles para insertar en el elemento "
+"anterior en la posición del intercalado:"
+
+#: includes/form-elements.php:95 includes/moderators-reject.php:76
+msgid ""
+"Hi [user_login], your submitted post <strong>[published_post_title]</strong> "
+"has ben rejected."
+msgstr ""
+"Hola [user_login], su publicación enviada <strong>[published_post_title]</"
+"strong> ha sido rechazada."
+
+#: includes/form-elements.php:96
+msgid "Reject Message"
+msgstr "Mensaje de rechazo"
+
+#: includes/form-elements.php:106 includes/moderators-form-element.php:379
+msgid "Your submission got Approve"
+msgstr "Su envío obtuvo Approve"
+
+#: includes/form-elements.php:107
+msgid "Approve Subject"
+msgstr "Aprobar asunto"
+
+#: includes/form-elements.php:117 includes/moderators-form-element.php:381
+msgid ""
+"Hi [user_login], your submitted post [published_post_title] has ben approve."
+msgstr ""
+"Hola [user_login], su publicación enviada [published_post_title] ha sido "
+"aprobación."
+
+#: includes/form-elements.php:118
+msgid "Approve Message"
+msgstr "Aprobar mensaje"
+
+#: includes/functions.php:105
+msgid "New Version in Process"
+msgstr "Nueva versión en proceso"
+
+#: includes/functions.php:109
+msgid "Edit is Disabled during moderation"
+msgstr "Editar está desactivado durante la moderación"
+
+#: includes/functions.php:109
+msgid "Edit"
+msgstr "Editar"
+
+#: includes/functions.php:150
+msgid "Status"
+msgstr "Estado"
+
+#: includes/functions.php:153
+msgid "Created"
+msgstr "Creado"
+
+#: includes/functions.php:158
+msgid "Actions"
+msgstr "Acciones"
+
+#: includes/functions.php:247
+msgid "Permanent Link to"
+msgstr "Enlace permanente a"
+
+#: includes/functions.php:260
+msgid "Created "
+msgstr "Creado "
+
+#: includes/functions.php:436 includes/functions.php:495
+#: includes/moderators-form-element.php:341 includes/moderators-reject.php:107
+#: includes/moderators-reject.php:184
+msgid "There has been an error sending the message!"
+msgstr "¡Se ha producido un error al enviar el mensaje!"
+
+#: includes/functions.php:499 includes/moderators-reject.php:188
+msgid "There has been an error changing the post status!"
+msgstr "¡Se ha producido un error al cambiar el estado del mensaje!"
+
+#: includes/functions.php:564
+msgid ""
+"You are not allowed to edit this post after it is send to moderation. What "
+"are you doing here?"
+msgstr ""
+"No se le permite editar este post después de que se envíe a la moderación. "
+"¿Qué haces aquí?"
+
+#: includes/moderators-form-element.php:20
+msgid "Select Moderators "
+msgstr "Seleccionar moderadores"
+
+#: includes/moderators-form-element.php:56
+msgid "Moderators"
+msgstr "Moderadores"
+
+#: includes/moderators-form-element.php:59
+msgid ""
+"Let you users select the moderator(s) form the selected role or from all "
+"users."
+msgstr ""
+"Permite a los usuarios seleccionar los moderadores del rol seleccionado o de "
+"todos los usuarios."
+
+#: includes/moderators-form-element.php:63
+msgid "Hide for Moderator"
+msgstr "Ocultar para moderador"
+
+#: includes/moderators-form-element.php:64
+msgid "Hide"
+msgstr "Ocultar"
+
+#: includes/moderators-form-element.php:67
+msgid "Hide this field for the moderators users."
+msgstr "Oculte este campo para los usuarios de moderadores."
+
+#: includes/moderators-form-element.php:71
+msgid "Select a Moderators"
+msgstr "Seleccionar un moderador"
+
+#: includes/moderators-form-element.php:72
+msgid "Placeholder"
+msgstr "Marcador de posición"
+
+#: includes/moderators-form-element.php:75
+msgid "This string will be show inside the field."
+msgstr "Esta cadena se mostrará dentro del campo."
+
+#: includes/moderators-form-element.php:260
+msgid "Please select a Moderator!"
+msgstr "¡Seleccione un moderador!"
+
+#: includes/moderators-form-element.php:298
+msgid "Approve"
+msgstr "Aprobar"
+
+#: includes/moderators-form-element.php:318
+msgid "Approve this Post"
+msgstr "Aprobar este post"
+
+#: includes/moderators-form-element.php:319
+msgid "Please select a Moderator"
+msgstr "Seleccione un moderador"
+
+#: includes/moderators-form-element.php:352
+msgid "You are not allowed to delete this entry! What are you doing here?"
+msgstr "¡No se le permite eliminar esta entrada! ¿Qué haces aquí?"
+
+#: includes/moderators-reject.php:13
+msgid "Mail Subject is a required field"
+msgstr "El asunto del correo es un campo obligatorio"
+
+#: includes/moderators-reject.php:17
+msgid "Message is a required field"
+msgstr "El mensaje es un campo obligatorio"
+
+#: includes/moderators-reject.php:53
+msgid "Reject Post"
+msgstr "Rechazar entrada"
+
+#: includes/moderators-reject.php:53
+msgid "Reject"
+msgstr "Rechazar"
+
+#: includes/moderators-reject.php:74
+msgid "Subject"
+msgstr "Asunto"
+
+#: includes/moderators-reject.php:84
+msgid "Reject Submission and send Message"
+msgstr "Rechazar envío y enviar mensaje"
+
+#: includes/moderators-reject.php:114
+msgid "Please enter a valid Subject"
+msgstr "Por favor, introduzca un Asunto válido"
+
+#: includes/moderators-reject.php:119 includes/moderators-reject.php:136
+msgid "Please enter a valid Message"
+msgstr "Por favor, introduzca un mensaje válido"
+
+#: includes/moderators-reject.php:127
+msgid "Please check the form."
+msgstr "Por favor, compruebe el formulario"
+
+#: includes/moderators-reject.php:201
+msgid "Post Rejected and message send to the user"
+msgstr "Publicar rechazado y enviar mensajes al usuario"
+
+#: includes/moderators-taxonomy.php:11 includes/moderators-taxonomy.php:16
+msgid "Moderators Posts"
+msgstr "Publicaciones de moderadores"
+
+#: includes/moderators-taxonomy.php:12
+msgid "Moderator Post"
+msgstr "Post del moderador"
+
+#: includes/shortcodes.php:21
+msgid "No posts to moderate at the moment."
+msgstr "No hay publicaciones para moderar en este momento."
+
+#. Plugin Name of the plugin/theme
+msgid "BuddyForms Moderation ( Former: Review Logic )"
+msgstr "BuddyForms Moderation ( Former: Review Logic )"
+
+#. Plugin URI of the plugin/theme
+msgid "https://themekraft.com/products/review/"
+msgstr "https://themekraft.com/products/review/"
+
+#. Description of the plugin/theme
+msgid ""
+"Create new drafts or pending moderations from new or published posts without "
+"changing the live version."
+msgstr ""
+"Crea nuevos borradores o moderaciones pendientes a partir de publicaciones "
+"nuevas o publicadas sin cambiar la versión en vivo."
+
+#. Author of the plugin/theme
+msgid "ThemeKraft"
+msgstr "ThemeKraft"
+
+#. Author URI of the plugin/theme
+msgid "https://themekraft.com/buddyforms/"
+msgstr "https://themekraft.com/buddyforms/"
