@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	buddyforms_add_bf_thickbox();
-	ob_start();
 	?>
 	<script>
 		jQuery(document).ready(function () {
@@ -109,8 +108,6 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 		</div>
 	</div>
 	<?php
-	$content = ob_get_clean();
-	echo $content;
 }
 
 add_action( 'wp_ajax_buddyforms_reject_post_as_moderator', 'buddyforms_reject_post_as_moderator' );
