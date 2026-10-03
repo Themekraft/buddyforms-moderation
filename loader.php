@@ -75,14 +75,9 @@ function bf_moderation_includes() {
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.1' );
 	}
-
-	// Only Check for requirements in the admin
-	if ( ! is_admin() ) {
-		return;
-	}
-
-	add_action( 'plugins_loaded', 'buddyforms_moderation_load_plugin_textdomain' );
 }
+
+add_action( 'init', 'buddyforms_moderation_load_plugin_textdomain', 5 );
 
 /**
  * Load the textdomain for the plugin
