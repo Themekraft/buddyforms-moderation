@@ -305,7 +305,10 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						</div>
 					</div>
 
-					<?php echo apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() ); ?>
+					<?php
+					$meta_html = apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() );
+					echo function_exists( 'buddyforms_wp_kses_allowed_atts' ) ? wp_kses( $meta_html, buddyforms_wp_kses_allowed_atts() ) : wp_kses_post( $meta_html );
+					?>
 
 					<div class="clear"></div>
 
