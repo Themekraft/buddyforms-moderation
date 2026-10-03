@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  * Plugin URI: https://themekraft.com/products/review/
  * Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- * Version: 1.5.1
+ * Version: 1.5.2-beta.1
  * Requires at least: 5.9
  * Requires PHP: 7.4
  * Requires Plugins: buddyforms
@@ -73,7 +73,7 @@ function bf_moderation_includes() {
 		}
 		include_once dirname( __FILE__ ) . '/includes/shortcodes.php';
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
-		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.1' );
+		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.2-beta.1' );
 	}
 }
 
