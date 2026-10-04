@@ -4,7 +4,7 @@ Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.2-beta.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.5.2 - 03 Oct 2026 =
+* Required plugins are now declared with the WordPress "Requires Plugins" header instead of the bundled TGM Plugin Activation library.
+* Fixed translations: the plugin's translations now load, and every string uses its own text domain.
+* Escaped the output of the reject form and the entry list.
+* Requires WordPress 5.9 and PHP 7.4. Tested up to WordPress 7.1.
+
 = 1.5.1 - 26 Dec 2023 =
 * Updated Freemius SDK.
 * Tested up to WordPress 6.4.2
