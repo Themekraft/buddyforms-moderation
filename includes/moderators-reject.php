@@ -1,8 +1,11 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	buddyforms_add_bf_thickbox();
-	ob_start();
 	?>
 	<script>
 		jQuery(document).ready(function () {
@@ -13,11 +16,11 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 				const post_reject_email_message = jQuery('#post_reject_email_message_<?php echo esc_js( $post_id ); ?>').val();
 
 				if (post_reject_email_subject == '') {
-					alert('<?php esc_html_e( 'Mail Subject is a required field', 'buddyforms-moderation' ); ?>');
+					alert('<?php esc_html_e( 'Mail Subject is a required field', 'buddyforms-review' ); ?>');
 					return false;
 				}
 				if (post_reject_email_message == '') {
-					alert('<?php esc_html_e( 'Message is a required field', 'buddyforms-moderation' ); ?>');
+					alert('<?php esc_html_e( 'Message is a required field', 'buddyforms-review' ); ?>');
 					return false;
 				}
 
@@ -31,7 +34,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 					data: {
 						"action": "buddyforms_reject_post_as_moderator",
 						"post_id": post_id,
-						"nonce": '<?php echo wp_create_nonce( __DIR__ . 'buddyforms_moderation' ); ?>',
+						"nonce": '<?php echo esc_js( wp_create_nonce( __DIR__ . 'buddyforms_moderation' ) ); ?>',
 						"form_slug": form_slug,
 						"post_reject_email_subject": post_reject_email_subject,
 						"post_reject_email_message": post_reject_email_message
@@ -59,7 +62,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 		}
 	</style>
 
-	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . esc_attr( $post_id ) . '" title="' . esc_html__( 'Reject Post', 'buddyforms-moderation' ) . '" class="bf-thickbox buddyforms_moderators_reject buddyforms_moderators_action">' . esc_html__( 'Reject', 'buddyforms-moderation' ) . '</a>'; ?>
+	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . esc_attr( $post_id ) . '" title="' . esc_html__( 'Reject Post', 'buddyforms-review' ) . '" class="bf-thickbox buddyforms_moderators_reject buddyforms_moderators_action">' . esc_html__( 'Reject', 'buddyforms-review' ) . '</a>'; ?>
 
 	<div id="buddyforms_reject_modal_<?php echo esc_attr( $post_id ); ?>" style="display:none;">
 		<div id="buddyforms_reject_wrap">
@@ -80,11 +83,11 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 			);
 
 			$moderation_options     = buddyforms_get_form_option( $form_slug, 'moderation' );
-			$reject_request_subject = ! empty( $moderation_options['reject_subject'] ) ? $moderation_options['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-moderation' );
+			$reject_request_subject = ! empty( $moderation_options['reject_subject'] ) ? $moderation_options['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-review' );
 			$reject_request_subject = buddyforms_moderation_process_shortcode( $reject_request_subject, $post_id, $form_slug );
-			$reject_form->addElement( new Element_Textbox( __( 'Subject', 'buddyforms-moderation' ), 'post_reject_email_subject_' . $post_id, array( 'value' => wp_kses_post( $reject_request_subject ) ) ) );
+			$reject_form->addElement( new Element_Textbox( __( 'Subject', 'buddyforms-review' ), 'post_reject_email_subject_' . $post_id, array( 'value' => wp_kses_post( $reject_request_subject ) ) ) );
 
-			$reject_request_message = ! empty( $moderation_options['reject_message'] ) ? $moderation_options['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
+			$reject_request_message = ! empty( $moderation_options['reject_message'] ) ? $moderation_options['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-review' );
 			$reject_request_message = buddyforms_moderation_process_shortcode( $reject_request_message, $post_id, $form_slug );
 			$reject_form->addElement(
 				new Element_Textarea(
@@ -101,12 +104,10 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 			?>
 
 			<br>
-			<a id="buddyforms_reject_post_as_moderator_<?php echo esc_attr( $post_id ); ?>" data-post_id="<?php echo esc_attr( $post_id ); ?>" data-form_slug="<?php echo esc_attr( $form_slug ); ?>" href="#" class="button btn-primary btn"><?php esc_html_e( 'Reject Submission and send Message', 'buddyforms-moderation' ); ?></a>
+			<a id="buddyforms_reject_post_as_moderator_<?php echo esc_attr( $post_id ); ?>" data-post_id="<?php echo esc_attr( $post_id ); ?>" data-form_slug="<?php echo esc_attr( $form_slug ); ?>" href="#" class="button btn-primary btn"><?php esc_html_e( 'Reject Submission and send Message', 'buddyforms-review' ); ?></a>
 		</div>
 	</div>
 	<?php
-	$content = ob_get_clean();
-	echo $content;
 }
 
 add_action( 'wp_ajax_buddyforms_reject_post_as_moderator', 'buddyforms_reject_post_as_moderator' );
@@ -124,19 +125,19 @@ function buddyforms_reject_post_as_moderator() {
 		}
 
 		if ( ! isset( $_POST['post_id'] ) ) {
-			echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
+			echo esc_html__( 'There has been an error sending the message!', 'buddyforms-review' );
 			die();
 		}
 
 		$post_id = intval( $_POST['post_id'] );
 
 		if ( ! isset( $_POST['post_reject_email_subject'] ) ) {
-			echo esc_html__( 'Please enter a valid Subject', 'buddyforms-moderation' );
+			echo esc_html__( 'Please enter a valid Subject', 'buddyforms-review' );
 			die();
 		}
 
 		if ( ! isset( $_POST['post_reject_email_message'] ) ) {
-			echo esc_html__( 'Please enter a valid Message', 'buddyforms-moderation' );
+			echo esc_html__( 'Please enter a valid Message', 'buddyforms-review' );
 			die();
 		}
 
@@ -144,7 +145,7 @@ function buddyforms_reject_post_as_moderator() {
 		if ( Form::isValid( $form_slug ) ) {
 
 		} else {
-			echo esc_html__( 'Please check the form.', 'buddyforms-moderation' );
+			echo esc_html__( 'Please check the form.', 'buddyforms-review' );
 			die();
 		}
 
@@ -153,7 +154,7 @@ function buddyforms_reject_post_as_moderator() {
 		$email_body = wp_kses_post( $email_body );
 
 		if ( empty( $email_body ) ) {
-			echo esc_html__( 'Please enter a valid Message', 'buddyforms-moderation' );
+			echo esc_html__( 'Please enter a valid Message', 'buddyforms-review' );
 			die();
 		}
 
@@ -203,11 +204,11 @@ function buddyforms_reject_post_as_moderator() {
 
 		$json = array( 'result' => '' );
 		if ( ! $result ) {
-			$json['result'] = __( 'There has been an error sending the message!', 'buddyforms-moderation' );
+			$json['result'] = __( 'There has been an error sending the message!', 'buddyforms-review' );
 		}
 
 		if ( is_wp_error( $result_update ) ) {
-			$json['result'] = __( 'There has been an error changing the post status!', 'buddyforms-moderation' );
+			$json['result'] = __( 'There has been an error changing the post status!', 'buddyforms-review' );
 		}
 
 		$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
@@ -220,7 +221,7 @@ function buddyforms_reject_post_as_moderator() {
 
 		update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
 
-		$json['result'] = __( 'Post Rejected and your message has been sent.', 'buddyforms-moderation' );
+		$json['result'] = __( 'Post Rejected and your message has been sent.', 'buddyforms-review' );
 
 		wp_send_json( $json );
 
