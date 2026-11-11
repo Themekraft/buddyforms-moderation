@@ -131,6 +131,12 @@ function buddyforms_reject_post_as_moderator() {
 
 		$post_id = intval( $_POST['post_id'] );
 
+		if ( ! buddyforms_moderation_user_can_moderate( $post_id ) ) {
+			status_header( 403 );
+			esc_html_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-review' );
+			die();
+		}
+
 		if ( ! isset( $_POST['post_reject_email_subject'] ) ) {
 			echo esc_html__( 'Please enter a valid Subject', 'buddyforms-review' );
 			die();

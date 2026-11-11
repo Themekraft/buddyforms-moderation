@@ -81,10 +81,6 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
-	if ( buddyforms_moderation_freemius()->is_not_paying() ) {
-		$element->setAttribute( 'disabled', 'disabled' );
-	}
-
 	$form_setup[] = $element;
 
 	$element_name    = 'buddyforms_options[moderation][reject_subject]';

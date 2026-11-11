@@ -18,8 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Domain Path: /languages
  * Svn: buddyforms-review
  *
- * @fs_premium_only /includes/moderators.php, /includes/moderators-taxonomy.php, /includes/moderators-reject.php
- *
  *****************************************************************************
  *
  * This script is free software; you can redistribute it and/or modify
@@ -66,11 +64,9 @@ function bf_moderation_includes() {
 		include_once dirname( __FILE__ ) . '/includes/form-elements.php';
 		include_once dirname( __FILE__ ) . '/includes/duplicate-post.php';
 		include_once dirname( __FILE__ ) . '/includes/functions.php';
-		if ( buddyforms_moderation_freemius()->is_paying_or_trial__premium_only() ) {
-			include_once dirname( __FILE__ ) . '/includes/moderators-taxonomy.php';
-			include_once dirname( __FILE__ ) . '/includes/moderators-form-element.php';
-			include_once dirname( __FILE__ ) . '/includes/moderators-reject.php';
-		}
+		include_once dirname( __FILE__ ) . '/includes/moderators-taxonomy.php';
+		include_once dirname( __FILE__ ) . '/includes/moderators-form-element.php';
+		include_once dirname( __FILE__ ) . '/includes/moderators-reject.php';
 		include_once dirname( __FILE__ ) . '/includes/shortcodes.php';
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.2' );
@@ -167,10 +163,6 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 						// If your addon is a serviceware, set this option to false.
 						'has_premium_version' => true,
 						'has_paid_plans'      => true,
-						'trial'               => array(
-							'days'               => 7,
-							'is_require_payment' => true,
-						),
 						'parent'              => array(
 							'id'         => '391',
 							'slug'       => 'buddyforms',
