@@ -621,10 +621,14 @@ function buddyforms_moderators_get_forms() {
 	global $buddyforms;
 
 	$teams = array();
+	if ( empty( $buddyforms ) || ! is_array( $buddyforms ) ) {
+		return $teams;
+	}
+
 	foreach ( $buddyforms as $form_slug => $buddyform ) {
-		if ( isset( $buddyform['form_fields'] ) ) {
+		if ( isset( $buddyform['form_fields'] ) && is_array( $buddyform['form_fields'] ) ) {
 			foreach ( $buddyform['form_fields'] as $key => $form_field ) {
-				if ( $form_field['type'] == 'moderators' ) {
+				if ( isset( $form_field['type'] ) && $form_field['type'] == 'moderators' ) {
 					$teams[ $form_slug ] = $buddyform['name'];
 				}
 			}
