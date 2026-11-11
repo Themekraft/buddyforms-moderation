@@ -194,14 +194,20 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 		$moderators     = array();
 		$old_moderators = get_post_meta( $post_id, 'buddyforms_moderators', true );
 
-		// Update the editors post meta
+		// Only keep users the field offers: its role and never the submitter.
 		if ( ! empty( $_POST['buddyforms_moderators'] ) ) {
-			update_post_meta( $post_id, 'buddyforms_moderators', buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) );
-
-			// Update the editors array
-			foreach ( buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) as $key => $moderator ) {
-				$moderators[ $moderator ] = $moderator;
+			$submitter_id = get_current_user_id();
+			foreach ( (array) wp_unslash( $_POST['buddyforms_moderators'] ) as $moderator ) {
+				$moderator = is_scalar( $moderator ) ? absint( $moderator ) : 0;
+				if ( buddyforms_moderation_is_allowed_moderator( $moderator, $customfield, $submitter_id ) ) {
+					$moderators[ $moderator ] = (string) $moderator;
+				}
 			}
+		}
+
+		// Update the editors post meta
+		if ( ! empty( $moderators ) ) {
+			update_post_meta( $post_id, 'buddyforms_moderators', array_values( $moderators ) );
 		}
 
 		if ( ! empty( $old_moderators ) && is_array( $old_moderators ) ) {
@@ -310,7 +316,8 @@ function buddyforms_moderators_ajax_approve_post() {
 		$post_id = intval( $_POST['post_id'] );
 
 		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
-		if ( ! $form_slug ) {
+		if ( ! $form_slug || ! buddyforms_moderation_user_can_moderate( $post_id ) ) {
+			status_header( 403 );
 			esc_html_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-review' );
 			die();
 		}
