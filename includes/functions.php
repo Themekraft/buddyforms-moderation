@@ -398,6 +398,7 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 					data: {
 						"action": "buddyforms_reject_now",
 						"post_id": post_id,
+						"nonce": '<?php echo esc_js( wp_create_nonce( 'buddyforms_reject_now_' . $post->ID ) ); ?>',
 						"user_email": user_email,
 						"bf_reject_mail_from": bf_reject_mail_from,
 						"bf_reject_mail_subject": bf_reject_mail_subject,
@@ -526,9 +527,16 @@ function buddyforms_reject_now() {
 		die();
 	}
 
-	$post_id = sanitize_key( $_POST['post_id'] );
+	$post_id = absint( $_POST['post_id'] );
+	$nonce   = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+	$post    = get_post( $post_id );
 
-	$post       = get_post( $post_id );
+	if ( empty( $post ) || ! wp_verify_nonce( $nonce, 'buddyforms_reject_now_' . $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
+		status_header( 403 );
+		echo esc_html__( 'You are not allowed to reject this post.', 'buddyforms-review' );
+		die();
+	}
+
 	$post_title = $post->post_title;
 	$postperma  = get_permalink( $post->ID );
 
@@ -543,10 +551,11 @@ function buddyforms_reject_now() {
 	$siteurl     = get_bloginfo( 'wpurl' );
 	$siteurlhtml = "<a href='$siteurl' target='_blank' >$siteurl</a>";
 
-	if ( ! isset( $_POST['user_email'] ) || ! isset( $_POST['bf_reject_mail_subject'] ) || ! isset( $_POST['bf_reject_mail_from'] ) || ! isset( $_POST['bf_reject_mail_message'] ) ) {
-		return;
+	if ( empty( $user_info ) || ! isset( $_POST['bf_reject_mail_subject'] ) || ! isset( $_POST['bf_reject_mail_from'] ) || ! isset( $_POST['bf_reject_mail_message'] ) ) {
+		die();
 	}
-	$mail_to = sanitize_email( wp_unslash( $_POST['user_email'] ) );
+	// The message always goes to the post author, whatever address the request names.
+	$mail_to = $user_info->user_email;
 	$subject = sanitize_text_field( wp_unslash( $_POST['bf_reject_mail_subject'] ) );
 	$from_email = sanitize_email( wp_unslash( $_POST['bf_reject_mail_from'] ) );
 	$emailBody  = sanitize_text_field( wp_unslash( $_POST['bf_reject_mail_message'] ) );
@@ -612,10 +621,14 @@ function buddyforms_moderators_get_forms() {
 	global $buddyforms;
 
 	$teams = array();
+	if ( empty( $buddyforms ) || ! is_array( $buddyforms ) ) {
+		return $teams;
+	}
+
 	foreach ( $buddyforms as $form_slug => $buddyform ) {
-		if ( isset( $buddyform['form_fields'] ) ) {
+		if ( isset( $buddyform['form_fields'] ) && is_array( $buddyform['form_fields'] ) ) {
 			foreach ( $buddyform['form_fields'] as $key => $form_field ) {
-				if ( $form_field['type'] == 'moderators' ) {
+				if ( isset( $form_field['type'] ) && $form_field['type'] == 'moderators' ) {
 					$teams[ $form_slug ] = $buddyform['name'];
 				}
 			}
@@ -703,6 +716,87 @@ function buddyforms_moderation_get_forced_moderator_role_by_form_slug( $form_slu
 	}
 
 	return $forced_role;
+}
+
+/**
+ * Whether a user may approve or reject a submission from the front end.
+ *
+ * Mirrors who gets the Approve and Reject links in the loop: the post has to wait for review and the
+ * user has to hold the form's moderator role ("All Roles" lets every logged-in user moderate) or be one
+ * of the moderators the author picked for that post.
+ *
+ * @param int $post_id Submission ID.
+ * @param int $user_id User ID, the current user when empty.
+ *
+ * @return bool
+ */
+function buddyforms_moderation_user_can_moderate( $post_id, $user_id = 0 ) {
+	$post_id = absint( $post_id );
+	$user_id = $user_id ? absint( $user_id ) : get_current_user_id();
+	if ( empty( $post_id ) || empty( $user_id ) ) {
+		return false;
+	}
+
+	if ( 'awaiting-review' !== get_post_status( $post_id ) ) {
+		return false;
+	}
+
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
+	$user      = get_userdata( $user_id );
+	if ( empty( $form_slug ) || empty( $user ) ) {
+		return false;
+	}
+
+	$forced_role = buddyforms_moderation_get_forced_moderator_role_by_form_slug( $form_slug );
+	if ( 'all' === $forced_role ) {
+		$can_moderate = true;
+	} elseif ( ! empty( $forced_role ) && in_array( $forced_role, (array) $user->roles, true ) ) {
+		$can_moderate = true;
+	} else {
+		$user_posts   = wp_get_object_terms( $user_id, 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
+		$can_moderate = ! is_wp_error( $user_posts ) && in_array( (string) $post_id, array_map( 'strval', $user_posts ), true );
+	}
+
+	/**
+	 * Filters whether a user may approve or reject a submission from the front end.
+	 *
+	 * @param bool   $can_moderate Whether the user may moderate the submission.
+	 * @param int    $post_id      Submission ID.
+	 * @param int    $user_id      User ID.
+	 * @param string $form_slug    Form slug.
+	 */
+	return (bool) apply_filters( 'buddyforms_moderation_user_can_moderate', $can_moderate, $post_id, $user_id, $form_slug );
+}
+
+/**
+ * Whether a user can be picked as moderator in a form's Moderators field.
+ *
+ * Same rules as the options the field renders: the field's role ("all" for any role), never the
+ * submitter.
+ *
+ * @param int   $moderator_id Picked user ID.
+ * @param array $customfield  Moderators field settings.
+ * @param int   $submitter_id User submitting the form.
+ *
+ * @return bool
+ */
+function buddyforms_moderation_is_allowed_moderator( $moderator_id, $customfield, $submitter_id ) {
+	$moderator_id = absint( $moderator_id );
+	if ( empty( $moderator_id ) || $moderator_id === absint( $submitter_id ) ) {
+		return false;
+	}
+
+	$moderator = get_userdata( $moderator_id );
+	if ( empty( $moderator ) ) {
+		return false;
+	}
+
+	$role = isset( $customfield['moderators'] ) ? $customfield['moderators'] : 'all';
+	if ( 'all' === $role ) {
+		return true;
+	}
+
+	return in_array( $role, (array) $moderator->roles, true );
 }
 
 /**
