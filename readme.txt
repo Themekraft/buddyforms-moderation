@@ -4,7 +4,7 @@ Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.3-beta.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,13 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.5.3 - 12 Nov 2026 =
+* Security: the Reject button on the post edit screen now checks a security token and that the user can edit the post, and the rejection email always goes to the post author.
+* Security: approving or rejecting a submission from the front end now checks that the user is a moderator of that submission.
+* Security: the Moderators field only saves users who are allowed to moderate the form, and never the author of the submission.
+* The Moderators feature is now available to everyone, without a license.
+* Fixed a PHP warning when no forms exist yet.
+
 = 1.5.2 - 03 Oct 2026 =
 * Required plugins are now declared with the WordPress "Requires Plugins" header instead of the bundled TGM Plugin Activation library.
 * Fixed translations: the plugin's translations now load, and every string uses its own text domain.
