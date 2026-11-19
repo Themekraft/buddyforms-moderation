@@ -32,7 +32,7 @@ function buddyforms_moderation_duplicate_post() {
 					echo json_encode( $results );
 					die;
 				} else {
-					wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
+					wp_safe_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
 				}
 			} else {
 				if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {

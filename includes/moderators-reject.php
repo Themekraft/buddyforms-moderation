@@ -120,7 +120,7 @@ function buddyforms_reject_post_as_moderator() {
 		if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) || empty( $_POST['form_slug'] ) ) {
 			die();
 		}
-		if ( ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), __DIR__ . 'buddyforms_moderation' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), __DIR__ . 'buddyforms_moderation' ) ) {
 			die();
 		}
 
@@ -155,6 +155,7 @@ function buddyforms_reject_post_as_moderator() {
 			die();
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by buddyforms_sanitize_mixed() and wp_kses_post() right below.
 		$email_body = ! empty( $_POST['post_reject_email_message'] ) ? buddyforms_sanitize_mixed( wp_unslash( $_POST['post_reject_email_message'] ) ) : '';
 
 		$email_body = wp_kses_post( $email_body );
@@ -186,7 +187,7 @@ function buddyforms_reject_post_as_moderator() {
 		$subject    = sanitize_text_field( wp_unslash( $_POST['post_reject_email_subject'] ) );
 		$email_body = buddyforms_moderation_process_shortcode( $email_body, $post_id, $form_slug_parent );
 
-		$email_body = apply_filters( 'the_content', $email_body );
+		$email_body = apply_filters( 'the_content', $email_body ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook.
 		$email_body = str_replace( ']]>', ']]&gt;', $email_body );
 
 		$subject = buddyforms_moderation_process_shortcode( $subject, $post_id, $form_slug_parent );

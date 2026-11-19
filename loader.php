@@ -84,7 +84,9 @@ function buddyforms_moderation_load_plugin_textdomain() {
 
 function buddyforms_moderation_error_log( $message ) {
 	if ( ! empty( $message ) ) {
-		error_log( 'BF Moderation -- ' . $message );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'BF Moderation -- ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only logs while debugging.
+		}
 	}
 }
 

@@ -1043,7 +1043,7 @@ function buddyforms_moderators_actions_attachment( $content ) {
  */
 function buddyforms_moderation_include_assets() {
 	wp_enqueue_style( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'css/buddyforms-moderation.css', array(), BUDDYFORMS_MODERATION_VERSION );
-	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), BUDDYFORMS_MODERATION_VERSION );
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), BUDDYFORMS_MODERATION_VERSION, false );
 	wp_localize_script(
 		'buddyforms-moderation',
 		'buddyformsModeration',
@@ -1088,6 +1088,7 @@ add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_
 
 add_action( 'pre_get_posts', 'buddyforms_enable_single_post_preview_for_moderators' );
 function buddyforms_enable_single_post_preview_for_moderators( $query ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only preview param, only lets moderators see the post awaiting review.
 	global $buddyforms;
 
 	if ( ! $query->is_single() || ! ( $query instanceof WP_Query ) ) {
@@ -1106,17 +1107,20 @@ function buddyforms_enable_single_post_preview_for_moderators( $query ) {
 	if ( $frontend_moderator === 'all' || in_array( $frontend_moderator, (array) $current_user->roles ) ) {
 		$query->set( 'post_status', 'awaiting-review' );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 
 
 add_filter( 'buddyforms_post_link_on_the_loop', 'buddyforms_post_link_on_list_posts_to_moderate', 10, 2 );
 function buddyforms_post_link_on_list_posts_to_moderate( $post_link, $post_id ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only list param, only adds the preview arg to the link.
 
 	if ( isset( $_GET['buddyforms_list_posts_to_moderate'] ) ) {
 		$post_link = add_query_arg( array( 'bf_awaiting_review_preview' => $post_id ), $post_link );
 	}
 
 	return $post_link;
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 
 function buddyforms_sanitize_mixed( $var ) {
