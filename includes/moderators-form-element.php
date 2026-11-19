@@ -181,6 +181,7 @@ add_filter( 'buddyforms_create_edit_form_display_element', 'buddyforms_moderator
  * @param $post_id
  */
 function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- runs on buddyforms_update_post_meta, fired only after BuddyForms verified the nonce (buddyforms_process_submission() in includes/form/form-control.php, buddyforms_metabox_admin_form_metabox_save() in includes/admin/form-metabox.php).
 
 	if ( $customfield['type'] == 'moderators' ) {
 
@@ -191,7 +192,7 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 		// Only keep users the field offers: its role and never the submitter.
 		if ( ! empty( $_POST['buddyforms_moderators'] ) ) {
 			$submitter_id = get_current_user_id();
-			foreach ( (array) wp_unslash( $_POST['buddyforms_moderators'] ) as $moderator ) {
+			foreach ( (array) wp_unslash( $_POST['buddyforms_moderators'] ) as $moderator ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each value is cast with absint() below.
 				$moderator = is_scalar( $moderator ) ? absint( $moderator ) : 0;
 				if ( buddyforms_moderation_is_allowed_moderator( $moderator, $customfield, $submitter_id ) ) {
 					$moderators[ $moderator ] = (string) $moderator;
@@ -220,6 +221,7 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 			}
 		}
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_meta', 10, 2 );
@@ -228,6 +230,7 @@ add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_me
 add_filter( 'buddyforms_form_custom_validation', 'buddyforms_moderators_server_validation', 2, 2 );
 
 function buddyforms_moderators_server_validation( $valid, $form_slug ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- runs on buddyforms_form_custom_validation, applied by buddyforms_process_submission() after its nonce check (includes/form/form-control.php).
 	$moderation_field = buddyforms_get_form_field_by( $form_slug, 'moderators', 'type' );
 	if ( ! empty( $moderation_field ) && ! empty( $moderation_field['required'] ) && empty( $moderation_field['hide_for_moderators'] ) ) {
 		$global_error = ErrorHandler::get_instance();
@@ -249,6 +252,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 	}
 
 	return $valid;
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 
@@ -295,7 +299,7 @@ function buddyforms_moderators_ajax_approve_post() {
 		if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) ) {
 			die();
 		}
-		if ( ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), __DIR__ . 'buddyforms_moderation' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), __DIR__ . 'buddyforms_moderation' ) ) {
 			die();
 		}
 

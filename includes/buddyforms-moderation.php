@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  */
 
-class BF_Moderation_Update_Post {
+class BuddyForms_Moderation_Update_Post {
 
 	private $status_edit;
 	private $status_moderation;
@@ -331,4 +331,4 @@ class BF_Moderation_Update_Post {
 
 }
 
-new BF_Moderation_Update_Post();
+new BuddyForms_Moderation_Update_Post();
