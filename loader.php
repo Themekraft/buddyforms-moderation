@@ -56,8 +56,8 @@ if ( ! function_exists( 'buddyforms_addon_plugin_dependencies_slug' ) ) {
 	add_filter( 'wp_plugin_dependencies_slug', 'buddyforms_addon_plugin_dependencies_slug' );
 }
 
-add_action( 'init', 'bf_moderation_includes', 10 );
-function bf_moderation_includes() {
+add_action( 'init', 'buddyforms_moderation_includes', 10 );
+function buddyforms_moderation_includes() {
 	global $buddyforms_new;
 	if ( ! empty( $buddyforms_new ) ) {
 		include_once dirname( __FILE__ ) . '/includes/buddyforms-moderation.php';
@@ -130,11 +130,11 @@ function buddyforms_moderation_need_buddyforms() {
  *
  * @since 1.4.5
  */
-function buddyform_moderation_activate() {
+function buddyforms_moderation_activate() {
 	flush_rewrite_rules();
 }
 
-register_activation_hook( __FILE__, 'buddyform_moderation_activate' );
+register_activation_hook( __FILE__, 'buddyforms_moderation_activate' );
 
 if ( ! function_exists( 'bfmod_fs' ) ) {
 	// Create a helper function for easy SDK access.
@@ -182,12 +182,12 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 	}
 }
 
-function bfmod_fs_is_parent_active_and_loaded() {
+function buddyforms_moderation_fs_is_parent_active_and_loaded() {
 	// Check if the parent's init SDK method exists.
 	return function_exists( 'buddyforms_core_fs' );
 }
 
-function bfmod_fs_is_parent_active() {
+function buddyforms_moderation_fs_is_parent_active() {
 	$active_plugins = get_option( 'active_plugins', array() );
 
 	if ( is_multisite() ) {
@@ -204,24 +204,25 @@ function bfmod_fs_is_parent_active() {
 	return false;
 }
 
-function bfmod_fs_init() {
-	if ( bfmod_fs_is_parent_active_and_loaded() ) {
+function buddyforms_moderation_fs_init() {
+	if ( buddyforms_moderation_fs_is_parent_active_and_loaded() ) {
 		// Init Freemius.
 		buddyforms_moderation_freemius();
 		// Signal that the add-on's SDK was initiated.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Freemius naming: <accessor id>_fs_loaded, kept as is.
 		do_action( 'bfmod_fs_loaded' );
 	} else {
 		add_action( 'admin_notices', 'buddyforms_moderation_need_buddyforms' );
 	}
 }
 
-if ( bfmod_fs_is_parent_active_and_loaded() ) {
+if ( buddyforms_moderation_fs_is_parent_active_and_loaded() ) {
 	// If parent already included, init add-on.
-	bfmod_fs_init();
-} elseif ( bfmod_fs_is_parent_active() ) {
+	buddyforms_moderation_fs_init();
+} elseif ( buddyforms_moderation_fs_is_parent_active() ) {
 	// Init add-on only after the parent is loaded.
-	add_action( 'buddyforms_core_fs_loaded', 'bfmod_fs_init' );
+	add_action( 'buddyforms_core_fs_loaded', 'buddyforms_moderation_fs_init' );
 } else {
 	// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
-	bfmod_fs_init();
+	buddyforms_moderation_fs_init();
 }

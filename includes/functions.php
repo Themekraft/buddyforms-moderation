@@ -4,8 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 // We need to delete all children if the parent has been deleted.
-add_action( 'transition_post_status', 'bf_moderation_delete_children', 99, 3 );
-function bf_moderation_delete_children( $new_status, $old_status, $post ) {
+add_action( 'transition_post_status', 'buddyforms_moderation_delete_children', 99, 3 );
+function buddyforms_moderation_delete_children( $new_status, $old_status, $post ) {
 
 	// Only continue if post status has changed to trash
 	if ( $new_status != 'trash' ) {
@@ -77,7 +77,7 @@ function buddyforms_moderation_get_logic( $form_slug ) {
 }
 
 
-function bf_moderation_the_loop_post_status( $statuses, $form_slug ) {
+function buddyforms_moderation_the_loop_post_status( $statuses, $form_slug ) {
 	if ( empty( $form_slug ) ) {
 		return $statuses;
 	}
@@ -91,10 +91,10 @@ function bf_moderation_the_loop_post_status( $statuses, $form_slug ) {
 	return array_merge( array( 'approved', 'publish', 'awaiting-review', 'edit-draft', 'draft' ), $statuses );
 }
 
-add_filter( 'buddyforms_shortcode_the_loop_post_status', 'bf_moderation_the_loop_post_status', 90, 2 );
+add_filter( 'buddyforms_shortcode_the_loop_post_status', 'buddyforms_moderation_the_loop_post_status', 90, 2 );
 
-add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 50, 2 );
-function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
+add_filter( 'buddyforms_loop_edit_post_link', 'buddyforms_moderation_edit_post_link', 50, 2 );
+function buddyforms_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;
 
 	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
@@ -193,7 +193,7 @@ endif;
 
 add_action( 'buddyforms_the_table_inner_tr_last', 'buddyforms_review_the_table_tr_last' );
 
-function bf_buddyforms_the_loop_li_last( $post_id ) {
+function buddyforms_moderation_the_loop_li_last( $post_id ) {
 	global $buddyforms;
 
 	$post_parent = $post_id;
@@ -325,7 +325,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 }
 
-add_action( 'buddyforms_the_loop_li_last', 'bf_buddyforms_the_loop_li_last' );
+add_action( 'buddyforms_the_loop_li_last', 'buddyforms_moderation_the_loop_li_last' );
 
 /**
  * Change the datetime format for the list of post used in the moderation shortcode
@@ -1128,8 +1128,8 @@ function buddyforms_sanitize_mixed( $var ) {
 }
 
 if( class_exists('myCRED_Hook') ){
-	add_filter( 'mycred_publish_hook_old', 'include_new_post_status', 10, 3 );
-	function include_new_post_status( $allowed_status, $post_id, $mycred_type ){
+	add_filter( 'mycred_publish_hook_old', 'buddyforms_moderation_mycred_include_new_post_status', 10, 3 );
+	function buddyforms_moderation_mycred_include_new_post_status( $allowed_status, $post_id, $mycred_type ){
 	
 		if( ! isset( $allowed_status['awaiting-review'] ) ){
 			array_push( $allowed_status, 'awaiting-review' );

@@ -264,13 +264,13 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
  *
  * @return mixed
  */
-function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id ) {
+function buddyforms_moderation_create_frontend_form_element( $form, $form_slug, $post_id ) {
 	$form = buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id );
 
 	return $form;
 }
 
-add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
+add_filter( 'buddyforms_create_edit_form_button', 'buddyforms_moderation_create_frontend_form_element', 9999, 3 );
 
 /**
  * @param $include
@@ -281,7 +281,7 @@ add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend
  * @return mixed
  * @since 1.4.0 Only remove the button when the moderation is enabled
  */
-function bf_moderation_include_form_action_button( $include, $form_slug, $form, $post_id ) {
+function buddyforms_moderation_include_form_action_button( $include, $form_slug, $form, $post_id ) {
 	global $buddyforms;
 
 	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
@@ -291,8 +291,8 @@ function bf_moderation_include_form_action_button( $include, $form_slug, $form, 
 	return false;
 }
 
-add_filter( 'buddyforms_include_form_draft_button', 'bf_moderation_include_form_action_button', 10, 4 );
-add_filter( 'buddyforms_include_form_submit_button', 'bf_moderation_include_form_action_button', 10, 4 );
+add_filter( 'buddyforms_include_form_draft_button', 'buddyforms_moderation_include_form_action_button', 10, 4 );
+add_filter( 'buddyforms_include_form_submit_button', 'buddyforms_moderation_include_form_action_button', 10, 4 );
 
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
@@ -416,7 +416,7 @@ add_filter( 'the_title', 'buddyforms_remove_private_prefix', 10, 2 );
 
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 
-function bf_moderation_post_control_args( $args ) {
+function buddyforms_moderation_post_control_args( $args ) {
 	if ( ! isset( $_POST['status'] ) ) {
 		return $args;
 	}
@@ -446,9 +446,9 @@ function bf_moderation_post_control_args( $args ) {
 	return $args;
 }
 
-add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10, 1 );
+add_filter( 'buddyforms_update_post_args', 'buddyforms_moderation_post_control_args', 10, 1 );
 
-function bf_moderation_create_edit_form_post_id( $post_id ) {
+function buddyforms_moderation_create_edit_form_post_id( $post_id ) {
 	global $buddyforms;
 
 	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
@@ -479,9 +479,9 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 
 }
 
-// add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
+// add_filter( 'buddyforms_create_edit_form_post_id', 'buddyforms_moderation_create_edit_form_post_id', 10, 1 );
 
-function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
+function buddyforms_moderation_post_status_css( $post_status_css, $form_slug ) {
 	global $buddyforms;
 
 	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
@@ -499,7 +499,7 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	return $post_status_css;
 }
 
-add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
+add_filter( 'buddyforms_post_status_css', 'buddyforms_moderation_post_status_css', 10, 2 );
 
 /**
  * New post status
