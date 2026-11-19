@@ -9,54 +9,137 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 add_action( 'admin_action_buddyforms_moderation_duplicate_post', 'buddyforms_moderation_duplicate_post' );
 function buddyforms_moderation_duplicate_post() {
-	if ( is_user_logged_in() ) {
-		global $wpdb;
-		if ( ! ( isset( $_GET['post_id'] ) || isset( $_POST['post_id'] ) || ( isset( $_REQUEST['action'] ) && 'buddyforms_moderation_duplicate_post' == $_REQUEST['action'] ) ) ) {
-			wp_die( 'No post to duplicate has been supplied!' );
-		}
+	$is_ajax = wp_doing_ajax();
 
-		/*
-		 * get the original post id
-		 */
-		$post_id = ( isset( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : absint( $_POST['post_id'] ) );
-
-		if ( ! empty( $post_id ) ) {
-			$new_post_id = buddyforms_moderation_duplicate_post_from_original( $post_id );
-			if ( $new_post_id !== false && is_numeric( $new_post_id ) ) {
-				if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-					$results = array(
-						'error'     => false,
-						'error_msg' => '0',
-						'redirect'  => admin_url( 'post.php?action=edit&post=' . $new_post_id ),
-					);
-					echo json_encode( $results );
-					die;
-				} else {
-					wp_safe_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
-				}
-			} else {
-				if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-					$results = array(
-						'error'     => true,
-						'error_msg' => 'Post creation failed, could not find original post: ' . $post_id,
-						'redirect'  => get_permalink(),
-					);
-					echo json_encode( $results );
-					die;
-				} else {
-					wp_redirect( get_permalink() );
-				}
-			}
-		}
-	} else {
-		$results = array(
-			'error'     => true,
-			'error_msg' => 'You are not logged in.',
-			'redirect'  => wp_login_url( get_permalink() ),
-		);
-		echo json_encode( $results );
-		die;
+	if ( ! is_user_logged_in() ) {
+		buddyforms_moderation_duplicate_post_error( __( 'You are not logged in.', 'buddyforms-review' ), 401, $is_ajax );
 	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification -- The nonce is checked below, once the post ID is known.
+	$post_id = isset( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : 0;
+	if ( empty( $post_id ) ) {
+		buddyforms_moderation_duplicate_post_error( __( 'No post to duplicate has been supplied.', 'buddyforms-review' ), 400, $is_ajax );
+	}
+
+	$nonce = isset( $_REQUEST['duplicate_nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['duplicate_nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, buddyforms_moderation_duplicate_post_nonce_action( $post_id ) ) ) {
+		buddyforms_moderation_duplicate_post_error( __( 'The link you followed has expired. Please try again.', 'buddyforms-review' ), 403, $is_ajax );
+	}
+
+	if ( ! buddyforms_moderation_user_can_duplicate_post( $post_id ) ) {
+		buddyforms_moderation_duplicate_post_error( __( 'Sorry, you are not allowed to create an edit draft of this post.', 'buddyforms-review' ), 403, $is_ajax );
+	}
+
+	$new_post_id = buddyforms_moderation_duplicate_post_from_original( $post_id );
+	if ( empty( $new_post_id ) || is_wp_error( $new_post_id ) ) {
+		buddyforms_moderation_duplicate_post_error( __( 'The edit draft could not be created.', 'buddyforms-review' ), 500, $is_ajax );
+	}
+
+	$redirect = admin_url( 'post.php?action=edit&post=' . absint( $new_post_id ) );
+	if ( $is_ajax ) {
+		wp_send_json(
+			array(
+				'error'     => false,
+				'error_msg' => '0',
+				'redirect'  => $redirect,
+			)
+		);
+	}
+
+	wp_safe_redirect( $redirect );
+	exit;
+}
+
+/**
+ * Nonce action of the "Create new Edit Draft" links.
+ *
+ * @param int $post_id ID of the post to duplicate.
+ *
+ * @return string
+ */
+function buddyforms_moderation_duplicate_post_nonce_action( $post_id ) {
+	return 'buddyforms_moderation_duplicate_post_' . absint( $post_id );
+}
+
+/**
+ * URL of the "Create new Edit Draft" action for a post.
+ *
+ * @param int $post_id ID of the post to duplicate.
+ *
+ * @return string
+ */
+function buddyforms_moderation_duplicate_post_url( $post_id ) {
+	return wp_nonce_url(
+		admin_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . absint( $post_id ) ),
+		buddyforms_moderation_duplicate_post_nonce_action( $post_id ),
+		'duplicate_nonce'
+	);
+}
+
+/**
+ * Whether the current user may create an edit draft of a post.
+ *
+ * Only published or moderated posts can be duplicated. The user needs to be able to edit the
+ * original post in WordPress, or to edit it in BuddyForms terms: the author of an entry of a
+ * BuddyForms form with the form's edit permission (or its "all" permission).
+ *
+ * @param int $post_id ID of the post to duplicate.
+ *
+ * @return bool
+ */
+function buddyforms_moderation_user_can_duplicate_post( $post_id ) {
+	$post = get_post( $post_id );
+	if ( ! $post instanceof WP_Post ) {
+		return false;
+	}
+
+	if ( ! in_array( $post->post_status, array( 'publish', 'approved', 'awaiting-review' ), true ) ) {
+		return false;
+	}
+
+	if ( current_user_can( 'edit_post', $post->ID ) ) {
+		return true;
+	}
+
+	if ( ! function_exists( 'buddyforms_get_form_slug_by_post_id' ) || ! function_exists( 'bf_user_can' ) ) {
+		return false;
+	}
+
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
+	if ( empty( $form_slug ) || 'none' === $form_slug ) {
+		return false;
+	}
+
+	$user_id  = get_current_user_id();
+	$can_edit = false;
+	if ( bf_user_can( $user_id, 'buddyforms_' . $form_slug . '_all', array(), $form_slug ) ) {
+		$can_edit = true;
+	} elseif ( (int) $post->post_author === (int) $user_id ) {
+		$can_edit = bf_user_can( $user_id, 'buddyforms_' . $form_slug . '_edit', array(), $form_slug );
+	}
+
+	return (bool) apply_filters( 'buddyforms_user_can_edit', $can_edit, $form_slug, $post->ID );
+}
+
+/**
+ * Stop a duplicate request with an error: JSON for AJAX requests, wp_die() otherwise.
+ *
+ * @param string $message Error message.
+ * @param int    $status  HTTP status code.
+ * @param bool   $is_ajax Whether the request is an AJAX request.
+ */
+function buddyforms_moderation_duplicate_post_error( $message, $status, $is_ajax ) {
+	if ( $is_ajax ) {
+		wp_send_json(
+			array(
+				'error'     => true,
+				'error_msg' => esc_html( $message ),
+			),
+			$status
+		);
+	}
+
+	wp_die( esc_html( $message ), esc_html__( 'Create new Edit Draft', 'buddyforms-review' ), array( 'response' => absint( $status ), 'back_link' => true ) );
 }
 
 function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
@@ -139,7 +222,7 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
  */
 function buddyforms_moderation_duplicate_post_link( $actions, $post ) {
 	if ( current_user_can( 'edit_pages' ) && $post->post_status === 'publish' ) {
-		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '</a>';
+		$actions['duplicate'] = '<a data-post_id="' . absint( $post->ID ) . '" href="' . esc_url( buddyforms_moderation_duplicate_post_url( $post->ID ) ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms-review' ) . '</a>';
 	}
 
 	return $actions;
@@ -169,7 +252,7 @@ function buddyforms_moderation_admin_bar_mod_button( $wp_admin_bar ) {
 	$args = array(
 		'id'    => 'buddyforms-admin-moderation',
 		'title' => __( 'Create new Edit Draft', 'buddyforms-review' ),
-		'href'  => get_admin_url() . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ),
+		'href'  => buddyforms_moderation_duplicate_post_url( $post->ID ),
 		'meta'  => array(
 			'data-post_id' => $post->ID,
 			'class'        => 'buddyforms-admin-bar-moderation',
