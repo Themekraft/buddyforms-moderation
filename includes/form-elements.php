@@ -296,6 +296,7 @@ add_filter( 'buddyforms_include_form_submit_button', 'buddyforms_moderation_incl
 
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only: only builds the submit buttons returned in the AJAX response; the submission itself is nonce-checked by buddyforms_process_submission().
 	global $buddyforms;
 
 	if ( isset( $json_args ) ) {
@@ -314,7 +315,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		return $json_args;
 	}
 
-	$form_slug = buddyforms_sanitize_slug( wp_unslash( $_POST['form_slug'] ) );
+	$form_slug = buddyforms_sanitize_slug( wp_unslash( $_POST['form_slug'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by buddyforms_sanitize_slug().
 
 	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
 
@@ -394,6 +395,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 	return $json_args;
 
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 function buddyforms_remove_private_prefix( $title ) {
@@ -417,6 +419,7 @@ add_filter( 'the_title', 'buddyforms_remove_private_prefix', 10, 2 );
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 
 function buddyforms_moderation_post_control_args( $args ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- runs on buddyforms_update_post_args, applied by buddyforms_update_post() inside buddyforms_process_submission() after its nonce check (includes/form/form-control.php).
 	if ( ! isset( $_POST['status'] ) ) {
 		return $args;
 	}
@@ -444,6 +447,7 @@ function buddyforms_moderation_post_control_args( $args ) {
 	}
 
 	return $args;
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 add_filter( 'buddyforms_update_post_args', 'buddyforms_moderation_post_control_args', 10, 1 );
@@ -510,6 +514,7 @@ add_filter( 'buddyforms_post_status_css', 'buddyforms_moderation_post_status_css
  * @return mixed|string
  */
 function buddyforms_moderation_create_edit_form_post_status( $post_status, $form_slug ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- runs on buddyforms_create_edit_form_post_status, applied by buddyforms_process_submission() after its nonce check (includes/form/form-control.php).
 	global $buddyforms;
 
 	if ( empty( $buddyforms[ $form_slug ]['moderation_logic'] ) || ( ! empty( $buddyforms[ $form_slug ]['moderation_logic'] ) && 'default' == $buddyforms[ $form_slug ]['moderation_logic'] ) ) {
@@ -526,6 +531,7 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 	}
 
 	return $post_status;
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 }
 
 add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
