@@ -4,7 +4,7 @@ Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,11 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.5.4 - 19 Nov 2026 =
+* Security: creating an edit draft of a post from wp-admin now checks a security token and that the user can edit that post.
+* Fixed a false "Just a test" error after submitting a form with a Moderators field.
+* Removed unused code that tried to load the Freemius SDK from an old BuddyForms location.
+
 = 1.5.3 - 12 Nov 2026 =
 * Security: the Reject button on the post edit screen now checks a security token and that the user can edit the post, and the rejection email always goes to the post author.
 * Security: approving or rejecting a submission from the front end now checks that the user is a moderator of that submission.

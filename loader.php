@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  * Plugin URI: https://themekraft.com/products/review/
  * Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- * Version: 1.5.3
+ * Version: 1.5.4
  * Requires at least: 5.9
  * Requires PHP: 7.4
  * Requires Plugins: buddyforms
@@ -69,7 +69,7 @@ function bf_moderation_includes() {
 		include_once dirname( __FILE__ ) . '/includes/moderators-reject.php';
 		include_once dirname( __FILE__ ) . '/includes/shortcodes.php';
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
-		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.3' );
+		define( 'BUDDYFORMS_MODERATION_VERSION', '1.5.4' );
 	}
 }
 
@@ -143,13 +143,9 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 
 		try {
 			if ( ! isset( $bfmod_fs ) ) {
-				// Include Freemius SDK.
-				if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
-					// Try to load SDK from parent plugin folder.
-					require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
-				} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
-					// Try to load SDK from premium parent plugin folder.
-					require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
+				// The Freemius SDK comes with BuddyForms, which loads it before this add-on initializes.
+				if ( ! function_exists( 'fs_dynamic_init' ) ) {
+					return false;
 				}
 
 				$bfmod_fs = fs_dynamic_init(

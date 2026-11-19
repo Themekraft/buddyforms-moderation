@@ -182,13 +182,7 @@ add_filter( 'buddyforms_create_edit_form_display_element', 'buddyforms_moderator
  */
 function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
-	$global_error = ErrorHandler::get_instance();
-
 	if ( $customfield['type'] == 'moderators' ) {
-
-		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
-
-		$global_error->add_error( new BuddyForms_Error( 'buddyforms_form_' . $form_slug, 'Just a test', '', $form_slug ) );
 
 		// Create a editors array to store all editors.
 		$moderators     = array();
