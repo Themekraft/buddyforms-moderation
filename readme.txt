@@ -1,6 +1,6 @@
 === BuddyForms Moderation ( Former: Review Logic ) ===
 Contributors: svenl77, buddyforms
-Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
+Tags: moderation, review, revision, frontend posting, frontend editing
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
