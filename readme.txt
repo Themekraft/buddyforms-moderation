@@ -4,7 +4,7 @@ Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,11 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.5.5 - 20 Nov 2026 =
+* Security: submissions to moderated forms can only use the moderation statuses the form offers.
+* Security: an approved draft only replaces an entry its author can edit.
+* Security: entries awaiting review are only shown to users who can moderate them.
+
 = 1.5.4 - 19 Nov 2026 =
 * Security: creating an edit draft of a post from wp-admin now checks a security token and that the user can edit that post.
 * Fixed a false "Just a test" error after submitting a form with a Moderators field.
