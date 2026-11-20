@@ -83,7 +83,7 @@ class BF_Moderation_Update_Post {
 				return $data;
 			}
 
-			if ( isset( $bf_form_slug ) && $data['post_parent'] != 0 ) {
+			if ( isset( $bf_form_slug ) && $data['post_parent'] != 0 && $this->bf_moderation_can_replace_parent( $postarr['ID'], $data['post_parent'], $bf_form_slug ) ) {
 
 				$data['post_status'] = 'approved';
 
@@ -134,6 +134,27 @@ class BF_Moderation_Update_Post {
 
 		return $data;
 
+	}
+
+	/**
+	 * Whether an approved draft can replace its parent entry: the parent must be an entry of the same form,
+	 * and belong to the draft's author or be editable by them.
+	 *
+	 * @param int    $draft_id
+	 * @param int    $parent_id
+	 * @param string $form_slug
+	 *
+	 * @return bool
+	 */
+	function bf_moderation_can_replace_parent( $draft_id, $parent_id, $form_slug ) {
+		$parent = get_post( $parent_id );
+		if ( empty( $parent ) || buddyforms_get_form_slug_by_post_id( $parent->ID ) !== $form_slug ) {
+			return false;
+		}
+
+		$draft_author = (int) get_post_field( 'post_author', $draft_id );
+
+		return ( $draft_author > 0 && (int) $parent->post_author === $draft_author ) || ( $draft_author > 0 && user_can( $draft_author, 'edit_post', $parent->ID ) );
 	}
 
 	/**

@@ -440,10 +440,33 @@ function bf_moderation_post_control_args( $args ) {
 	}
 
 	if ( $post_status == 'publish-draft' ) {
-		$args['post_status'] = 'publish';
+		$form_slug  = ! empty( $args['form_slug'] ) ? $args['form_slug'] : '';
+		$old_status = ! empty( $args['post_id'] ) ? get_post_status( $args['post_id'] ) : '';
+		// Only entries that were approved before can be published again without moderation.
+		if ( 'publish_draft' === buddyforms_get_form_option( $form_slug, 'moderation_logic' ) && in_array( $old_status, array( 'publish', 'approved' ), true ) ) {
+			$args['post_status'] = 'publish';
+		} else {
+			$args['post_status'] = 'edit-draft';
+		}
 	}
 
 	return $args;
+}
+
+/**
+ * Post statuses a submission to a moderated form can ask for, as sent by the moderation buttons.
+ *
+ * @param string $form_slug
+ *
+ * @return array
+ */
+function buddyforms_moderation_submission_statuses( $form_slug ) {
+	$statuses = array( 'edit-draft', 'awaiting-review', 'new-draft', 'draft' );
+	if ( 'publish_draft' === buddyforms_get_form_option( $form_slug, 'moderation_logic' ) ) {
+		$statuses[] = 'publish-draft';
+	}
+
+	return (array) apply_filters( 'buddyforms_moderation_submission_statuses', $statuses, $form_slug );
 }
 
 add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10, 1 );
@@ -517,12 +540,14 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 	}
 
 	if ( isset( $_POST['status'] ) ) {
-		if ( $_POST['status'] == 'submitted' || $_POST['status'] == 'publish' ) {
+		$requested_status = sanitize_text_field( wp_unslash( $_POST['status'] ) );
+
+		// Only the statuses the moderation buttons send are kept; anything else stays a draft until a moderator approves it.
+		if ( ! in_array( $requested_status, buddyforms_moderation_submission_statuses( $form_slug ), true ) ) {
 			return 'edit-draft';
 		}
 
-		// What if someone enter a not existing post status?
-		$post_status = sanitize_text_field( wp_unslash( $_POST['status'] ) );
+		$post_status = $requested_status;
 	}
 
 	return $post_status;
